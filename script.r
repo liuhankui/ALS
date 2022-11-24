@@ -1,14 +1,14 @@
 #requirements-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 library(grid)
 library(ggplot2)
-library(lemon)
-library(venn)
+library(lemon) # for fig2
+library(venn) # for fig1
 library(plyr)
 library(reshape2)
 library(RColorBrewer)
-library(ggsankey)
-library(tidyverse)
-library(dplyr)
+library(ggsankey) # for fig3A
+library(tidyverse) # for fig3A
+library(dplyr) # for fig3A
 
 #workdir-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #git clone and cd ALS/  
