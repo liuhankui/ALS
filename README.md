@@ -8,7 +8,7 @@
 #### 3 files with .txt and .rda suffix in data/ are employed in script.r
 
 
-# usage:
+# Usage:
 
 git clone --recursive https://github.com/liuhankui/ALS.git
 
