@@ -11,17 +11,13 @@ library(tidyverse)
 library(dplyr)
 
 #workdir-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#git and cd ALS/  
+#git clone and cd ALS/  
 setwd("data/")
 
-if(require(EWCE)){
-  print('EWCE work')
-}else{
-  source('../EWCE/bootstrap_enrichment_test.r')
-  source('../EWCE/cell_list_dist.r')
-  source('../EWCE/generate_controlled_bootstrap_geneset.r')
-  source('../EWCE/get_summed_proportions.r')
-}
+source('../EWCE/bootstrap_enrichment_test.r')
+source('../EWCE/cell_list_dist.r')
+source('../EWCE/generate_controlled_bootstrap_geneset.r')
+source('../EWCE/get_summed_proportions.r')
 
 ALS_P<-c('ALS2','ANG','ANXA11','ATXN2','C9orf72','CCNF','CHCHD10','CHMP2B','CYLD','DCTN1','ERBB4','FIG4','FUS','HNRNPA1','KIF5A','MATR3','NEFH','NEK1','OPTN','PFN1','PRPH','SETX','SIGMAR1','SOD1','SPG11','SQSTM1','TARDBP','TBK1','TUBA4A','UBQLN2','VAPB','VCP')
 ALS_S<-c('ACSL5','ALCAM','ATXN1','ATXN3','C21orf2','C9orf72','CABIN1','CAMK1G','CNTN4','DPP6','FGD4','FGGY','FNBP1','GGNBP2','GPR133','GPX3','INPP5B','ITGA9','ITPR2','KIF5A','MOBKL2B','MOBP','MYO18B','NEK1','OPCML','PFKP','RAPGEF5','SARM1','SCFD1','SOD1','SUSD2','TBK1','TNIP1','TYW3','UNC13A','IFNK','CRYZ','ERGIC1','PTPRN2','COG3','SPATA2','SCL9A8','CFAP410','G2E3','CLCN3','ZDHHC6','B4GALNT1','MOB3B')
