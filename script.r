@@ -1,7 +1,7 @@
 #requirements-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 library(grid)
 library(ggplot2)
-library(ggpubr)
+library(lemon)
 library(venn)
 library(plyr)
 library(reshape2)
@@ -141,9 +141,8 @@ fig2C<-ggplot(odf[odf$source=='human muscle',],aes(celltype,-log10(FDR)))+
         axis.title = element_text(colour='black'),
         axis.text = element_text(colour='black'))
 
-fig2<-ggarrange(fig2A,fig2B,fig2C,ncol=3,common.legend=TRUE)
 pdf('Fig2.pdf',width=15,height=7)
-fig2
+grid_arrange_shared_legend(fig2A,fig2B,fig2C,ncol=3,position='top')
 dev.off()
 
 #Fig3-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
