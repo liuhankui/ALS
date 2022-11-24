@@ -205,7 +205,7 @@ fig4A<-ggplot(df,aes(brain))+
   annotate(geom = 'text',x = c(1/47,1/1.177),y = c(0,0),label = c('Fam187b','Ank1'), fontface = 'italic',vjust=2,hjust=0.2)
 
 #funtion-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-striness_test<-function(sddf=NA,geneList=NA){
+strictness_test<-function(sddf=NA,geneList=NA){
   results<-apply(sddf,2,function(x){
     bg.genes<-row.names(sddf[!is.na(x),])
     x<-x[!is.na(x)]
@@ -235,9 +235,9 @@ HI.mouse<-unique(m2h[m2h$HGNC.symbol %in% HI,"MGI.symbol"])
 LOFT.mouse<-unique(m2h[m2h$HGNC.symbol %in% LOFT,"MGI.symbol"])
 NNN.mouse<-unique(m2h[m2h$HGNC.symbol %in% NNN,"MGI.symbol"])
 
-result1<-striness_test(df,HI.mouse)
-result2<-striness_test(df,LOFT.mouse)
-result3<-striness_test(df,NNN.mouse)
+result1<-strictness_test(df,HI.mouse)
+result2<-strictness_test(df,LOFT.mouse)
+result3<-strictness_test(df,NNN.mouse)
 sdf<-rbind(as.data.frame(t(result1)),
            as.data.frame(t(result2)),
            as.data.frame(t(result3)))
@@ -268,12 +268,12 @@ SPG.mouse<-unique(m2h[m2h$HGNC.symbol %in% SPG,"MGI.symbol"])
 
 df<-read.table("SP.sd.txt",sep="\t",row.names = 1,head=T)
 
-result1<-striness_test(df,ALS_S.mouse)
-result2<-striness_test(df,ALS_P.mouse)
-result3<-striness_test(df,HMN.mouse)
-result4<-striness_test(df,SA.mouse)
-result5<-striness_test(df,SMA.mouse)
-result6<-striness_test(df,SPG.mouse)
+result1<-strictness_test(df,ALS_S.mouse)
+result2<-strictness_test(df,ALS_P.mouse)
+result3<-strictness_test(df,HMN.mouse)
+result4<-strictness_test(df,SA.mouse)
+result5<-strictness_test(df,SMA.mouse)
+result6<-strictness_test(df,SPG.mouse)
 
 result1<-p.adjust(result1,method='fdr')
 result2<-p.adjust(result2,method='fdr')
@@ -312,9 +312,9 @@ ALS_P_lof.mouse<-unique(m2h[m2h$HGNC.symbol %in% ALS_P_lof,"MGI.symbol"])
 ALS_P_gof.mouse<-unique(m2h[m2h$HGNC.symbol %in% ALS_P_gof,"MGI.symbol"])
 ALS_P_unknown.mouse<-unique(m2h[m2h$HGNC.symbol %in% ALS_P_unknown,"MGI.symbol"])
 
-result1<-striness_test(df,ALS_P_lof.mouse)
-result2<-striness_test(df,ALS_P_gof.mouse)
-result3<-striness_test(df,ALS_P_unknown.mouse)
+result1<-strictness_test(df,ALS_P_lof.mouse)
+result2<-strictness_test(df,ALS_P_gof.mouse)
+result3<-strictness_test(df,ALS_P_unknown.mouse)
 
 result1<-p.adjust(result1,method='fdr')
 result2<-p.adjust(result2,method='fdr')
