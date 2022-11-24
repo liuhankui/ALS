@@ -1,4 +1,4 @@
-#requirements 
+#requirements-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 library(grid)
 library(ggplot2)
 library(ggpubr)
@@ -9,17 +9,17 @@ library(RColorBrewer)
 library(ggsankey)
 library(tidyverse)
 library(dplyr)
-library(formattable)
 library(EWCE)
 
+#workdir-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#git and cd ALS/  
+setwd("data/")
+
 #if can not install EWCE or run EWCE successfully, download and source the below four r scripts
-#source('bootstrap_enrichment_test.r')
-#source('cell_list_dist.r')
-#source('generate_controlled_bootstrap_geneset.r')
-#source('get_summed_proportions.r')
-
-setwd("ALS/data")
-
+#source('../EWCE/bootstrap_enrichment_test.r')
+#source('../EWCE/cell_list_dist.r')
+#source('../EWCE/generate_controlled_bootstrap_geneset.r')
+#source('../EWCE/get_summed_proportions.r')
 
 ALS_P<-c('ALS2','ANG','ANXA11','ATXN2','C9orf72','CCNF','CHCHD10','CHMP2B','CYLD','DCTN1','ERBB4','FIG4','FUS','HNRNPA1','KIF5A','MATR3','NEFH','NEK1','OPTN','PFN1','PRPH','SETX','SIGMAR1','SOD1','SPG11','SQSTM1','TARDBP','TBK1','TUBA4A','UBQLN2','VAPB','VCP')
 ALS_S<-c('ACSL5','ALCAM','ATXN1','ATXN3','C21orf2','C9orf72','CABIN1','CAMK1G','CNTN4','DPP6','FGD4','FGGY','FNBP1','GGNBP2','GPR133','GPX3','INPP5B','ITGA9','ITPR2','KIF5A','MOBKL2B','MOBP','MYO18B','NEK1','OPCML','PFKP','RAPGEF5','SARM1','SCFD1','SOD1','SUSD2','TBK1','TNIP1','TYW3','UNC13A','IFNK','CRYZ','ERGIC1','PTPRN2','COG3','SPATA2','SCL9A8','CFAP410','G2E3','CLCN3','ZDHHC6','B4GALNT1','MOB3B')
@@ -32,7 +32,7 @@ GeneList<-list('ALS-pathogenicity'=ALS_P,'ALS-susceptibility'=ALS_S,'HMN'=HMN,'S
 ALSGeneList<-list(ALS_P,ALS_S)
 NDsGeneList<-list(unique(ALS_P,ALS_S),HMN,SA,SMA,SPG)
 
-#Fig1
+#Fig1-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 pdf('Fig1A.pdf',width=8,height=8)
 venn(ALSGeneList,snames ='Pathogenicity,Susceptibility',zcolor = brewer.pal(5,"Set2")[c(1,1)],opacity =0.5,ilcs=2,sncs=2,ggplot=F,box=F)
 dev.off()
@@ -40,7 +40,7 @@ pdf('Fig1B.pdf',width=8,height=8)
 venn(NDsGeneList,snames ='ALS,HMN,SA,SMA,SPG',zcolor = brewer.pal(5,"Set2"),opacity =0.5,ilcs=2,sncs=2,ggplot=F,box=F)
 dev.off()
 
-#Fig2
+#Fig2-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 load('M2H.RData')
 m2h = unique(mouse_to_human_homologs[,c("HGNC.symbol","MGI.symbol")])
 bg.mouse<-unique(m2h$MGI.symbol)
@@ -146,10 +146,10 @@ pdf('Fig2.pdf',width=15,height=7)
 fig2
 dev.off()
 
-#Fig3
+#Fig3-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#Fig3A
 sdf<-odf[odf$FDR<0.07,]
 ldf<-sdf %>% make_long(gene,celltype,source)
-
 fig3A<-ggplot(ldf, aes(x = x, next_x = next_x, node = node, next_node = next_node, fill = node, label = node)) +
   geom_sankey(flow.alpha = .6,node.color = "gray30") +
   geom_sankey_label(size = 3, color = "black") +
@@ -162,7 +162,7 @@ fig3A<-ggplot(ldf, aes(x = x, next_x = next_x, node = node, next_node = next_nod
         strip.text = element_text(size=15,colour="black"))
 
 
-#supplement table 6
+#supplement table 6-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 odfrep<-data.frame(celltype=NA,p=NA,gene=NA,source=NA)
 for(i in 1:2){
   x<-GeneList[[i]]
@@ -190,14 +190,12 @@ for(i in 1:2){
 }
 odfrep<-odfrep[-1,]
 row.names(odfrep)<-1:nrow(odfrep)
+write.table(odfrep,file='tableS6.xls',sep='\t',qupte=F,row.names=F,col.names=T)
+odfrep
 
-formattable(odfrep)
-
-
-#fig4
-
+#Fig4-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#Fig4A-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 df<-read.table("brain_and_SP.sd.txt",sep="\t",row.names = 1,head=T)
-
 fig4A<-ggplot(df,aes(brain))+
   geom_histogram(bins=100,fill= brewer.pal(5,"Set2")[5])+
   xlab('Strictness')+ylab('Counts')+ylim(c(-150,1300))+
@@ -207,16 +205,9 @@ fig4A<-ggplot(df,aes(brain))+
   annotate(geom = 'point',x = c(1/47,1/1.177),y = c(-25,-25),shape=24,fill="red",colour='red',size=3)+
   annotate(geom = 'text',x = c(1/47,1/1.177),y = c(0,0),label = c('Fam187b','Ank1'), fontface = 'italic',vjust=2,hjust=0.2)
 
-HI<-c('ANK2','APC','BCL11B','CD2AP','COMT','CSF2RA','DMPK','DYRK1A','EGR1','EHMT1','FGF10','FOXP1','FOXP2','GCH1','GHRL','GTF2I','HOXD13','IGF1','KCNQ2','LMX1B','MAPT','MC4R','NF1','NKX2-5','NLGN4X','NLRP3','NPAS3','NSD1','PARK2','PAX6','PIK3R1','PRODH','PTEN','RELN','SATB2','SCN1A','SEMA5A','SHFM1','SHMT1','SNCA','SPR','ST7','TBX1','TCF4','TGFB1','TPM1','TSC1','TSC2','WWOX')
-LOFT<-c('A2M','ABCA10','ABCA8','ABCC11','ABCC12','ABHD12B','ABHD14B','ACSBG2','ACSM2A','ACSM2B','ACSM3','ADAM2','ADPRHL1','ADSSL1','AHNAK2','AKAP3','ALDH1B1','ANKRD30A','ANKRD35','ANO5','AP1G2','APIP','APOBEC3A','APOBEC3B','ASB15','ASPSCR1','ATP10B','ATP11A','ATP12A','ATP2C2','BPHL','BPIFA3','BTN3A3','BTNL2','BTNL8','BTNL9','C10orf53','C11orf40','C1orf127','C2orf40','C3orf14','C4orf46','C4orf50','C6','CABYR','CAPN9','CARD6','CCDC121','CCDC13','CCDC60','CCDC66','CD180','CD36','CD96','CDH19','CDK11A','CDKL2','CELA1','CEP72','CES1','CES5A','CFHR1','CFHR2','CFHR3','CHD1L','CHIT1','CHPF2','CLCN1','CLYBL','CNKSR1','COL16A1','COL6A2','COL6A5','CPXM2','CROT','CRYGN','CRYZ','CSH1','CTSE','CYP2A6','CYP2C8','CYP2D6','CYP2F1','CYP3A5','CYP4B1','DCDC2B','DCHS2','DDX60','DEFB126','DHDH','DMBT1','DNAH7','DQX1','DUOX2','ECT2L','EFCAB13','EFCAB3','EFCAB5','EFCAB6','ENOSF1','ENPEP','EPPK1','EPX','ERAP1','ERV3-1','EXO5','FAM129C','FAM151A','FAM187B','FAM45A','FAM81B','FCGBP','FCGR2A','FCN3','FLG','FLG2','FMO2','FRG2B','FUT2','FUT6','GADL1','GBGT1','GBP3','GBP4','GCFC2','GH2','GJB4','GLB1L2','GMPR','GOLGA8S','GP6','GPATCH2L','GRIN3B','GRK7','GYPB','HELB','HK3','HLA-B','HLA-DPA1','HPSE','HRG','HRNR','IDI2','IFIH1','IFNK','IL17RC','IL3RA','IQCH','ITIH1','KIAA0753','KIAA1257','KIAA1586','KIR3DL1','KLK14','KLK3','KRT4','KRT77','KRT83','LMF2','LMO7','LPA','LRRC39','LRTM1','MANEA','MAP3K4','MAZ','MCF2L','MCOLN3','MFSD9','MGAM','MLANA','MMP10','MOGAT1','MOK','MOXD1','MS4A6A','MST1','MUC17','MUC6','MUTYH','MYBBP1A','MYH1','MYH13','MYH8','MYO1A','MYOC','MYOF','NAALAD2','NBPF14','NBPF15','NEIL1','NLRP13','NLRP9','NOP16','NUDT8','OARD1','OBSCN','OCEL1','OR8S1','PAPLN','PDE11A','PDIA2','PGPEP1L','PHRF1','PKD1L2','PKHD1L1','PLA2G2C','PLA2G4D','PLA2R1','PLEKHG7','PLIN4','PNLIPRP3','POLM','POTEH','PPEF2','PPL','PPP1R3A','PRAMEF2','PRB1','PRB2','PRB4','PSG1','PSG11','PSG4','PSG9','PTCHD3','PTGDR','PXDNL','PZP','RAI1','RERGL','RETSAT','RFPL1','RGPD4','RGS11','RHD','RNF32','ROPN1B','RP1L1','RPTN','RTKN2','RTP1','SAMD11','SEMG2','SERHL2','SERPINA10','SERPINA9','SERPINB3','SFI1','SIGLEC1','SIGLEC5','SLC17A9','SLC22A10','SLC22A14','SLC22A25','SLC26A10','SLC5A4','SLCO1B1','SLFN13','SPATA31A6','SPATA4','SPATC1','SPNS3','SULT1A2','SULT1C4','SYNM','SYTL2','TAF6','TCF3','TCHHL1','TEKT3','TGM4','THBS4','THEM5','TIGD6','TLR10','TLR5','TMC2','TMEM82','TMIE','TMPRSS7','TNN','TRIM22','TRIM45','TRIM48','TRIM59','TRMT10B','TRMT2A','TTC38','TTN','UGT2B10','UGT2B17','UGT2B28','UMODL1','UNC93A','UPB1','UPK3A','UPP2','USP45','USP6','VILL','VWA3B','VWA7','WDR27','WDR90','XIRP1','XRRA1','ZAN','ZNF223','ZNF229','ZNF257','ZNF30','ZNF343','ZNF396','ZNF417','ZNF486','ZNF528','ZNF544','ZNF587','ZNF599','ZNF611','ZNF790','ZNF83','ZNF831','ZNF844','ZNF846','ZNF860','ZNF878','ZNF92','ZRANB3')
-NNN<-c('KCNJ10','KCNJ11','KCNJ2','KCNJ5','KCNQ1','KCNQ1OT1','KCNQ4','KCTD7','KIAA0196','KIF1B','KIF5A','KIF7','KIT','KLF1','KLF11','KLF6','KLHDC8B','KLK4','KRAS','KRT1','KRT10','KRT13','KRT16','KRT17','KRT4','KRT6A','KRT6B','KRT81','KRT83','KRT86','L2HGDH','LAMA2','LAMP2','LARGE','LBR','LCA5','LCAT','LDB3','LEMD3','LEPRE1','LFNG','LHFPL5','LIG4','LIPI','LITAF','LMBR1','LMBRD1','LOXHD1','LOXL1','LPL','LPP','LRAT','LRP5','LRRC8A','LRTOMT','LTBP2','LTBP3','LYST','LYZ','LZTS1','MAMLD1','MAN2B1','MANBA','MAP3K1','MAP3K8','MAPK10','MAPK8IP1','MARVELD2','MC1R','MCCC2','MCOLN1','MED25','MEFV','MEN1','MESP2','MFN2','MFSD8','MGAT2','MINPP1','MITF','MKKS','MKS1','MLH1','MLH3','MLLT10','MMAA','MMAB','MMACHC','MMADHC','MMP13','MMP20','MN1','MOGS','MPDU1','MPI','MPL','MPLKIP','MPZ','MS4A1','MSH2','MSH6','MSX1','MSX2','MTMR2','MTTP','MUC5B','MUTYH','MVK','MXI1','MYBPC3','MYC','MYH11','MYH14','MYH3','MYH6','MYH7','MYH9','MYL2','MYL3','MYLK2','MYO15A','MYO1A','MYO3A','MYO6','MYO7A','MYOC','MYOT','NBN','NCF1','NCF2','NCOA4','NCSTN','NDP','NDRG1','NDUFA10','NDUFA12','NDUFA13','NDUFA2','NDUFA9','NDUFS3','NDUFS4','NDUFS7','NDUFS8','NEFH','NEFL','NEUROD1','NEXN','NF2','NHLRC1','NIPA1','NIPBL','NKX2-6','NLRP7','NME1','NOBOX','NODAL','NOG','NOTCH1','NOTCH2','NPC2','NPHP1','NPHP3','NPHP4','NPM1','NPPA','NPR2','NR0B1','NR0B2','NR2E3','NR4A3','NR5A1','NRL','NT5C3A','NUP214','NUP62','NYX','OAS1','OAT','OCA2','OCLN','OCRL','ODC1','OFD1','OGG1','OPCML','OPN1LW','OPN1MW','OPTN','OSMR','OSTM1','OTC','OTOA','OTOF','OTX2','PABPN1','PADI4','PALB2','PANK2','PARK7','PAX3','PAX4','PAX7','PAX8','PAX9','PC','PCCA',
-       'PCCB','PCDH15','PCM1','PDE6B','PDE6C','PDE6G','PDE8B','PDGFRA','PDGFRL','PDHA1','PDX1','PDYN','PDZD7','PEX1','PEX10','PEX13','PEX14','PEX19','PEX2','PEX26','PEX3','PEX5','PFKM','PHEX','PHF6','PHGDH','PHKA2','PHKB','PHKG2','PHYH','PINK1','PITPNM3','PITX2','PKD1','PKD2','PKHD1','PLA2G2A','PLA2G6','PLAG1','PLCB1','PLOD1','PLP1','PMM2','PMP22','PNKP','PNP','PNPLA6','POLG','POLH','POLR1C','POLR1D','POMT1','POMT2','PORCN','POU3F4','POU4F3','PPARG','PPARGC1B','PPIB','PPOX','PPP1R3A','PPP2R1B','PPT1','PRCC','PRCD','PRF1','PRICKLE2','PRKAG2','PRKAR1A','PRKCG','PRKCH','PRNP','PROK2','PROKR2','PROM1','PRPF3','PRPF31','PRPF8','PRPH','PRPH2','PRPS1','PRX','PSAT1','PSENEN','PSPH','PTCH1','PTCH2','PTGIS','PTHLH','PTPN1','PTPN11','PTPN22','PTPRJ','PTPRQ','PTRF','PYGM','RAB7A','RAD51','RAD54L','RAX','RAX2','RB1','RB1CC1','RBM20','RBM8A','RD3','RDH12','RDH5','RDX','RECQL4','REEP1','REN','RET','RFT1','RFX5','RFXANK','RFXAP','RGR','RHAG','RHO','RLBP1','RMRP','RNASEH2A','RNASEH2B','RNASEH2C','RNF139','RNF6','ROBO2','ROR2','RP1','RP1L1','RP2','RP9','RPE65','RPGR','RPGRIP1','RPL11','RPL35A','RPL5','RPS10','RPS17','RPS19','RPS24','RPS7','RSPH4A','RSPH9','RSPO4','RUNX1','RUNX2','RXFP2','RYR1','RYR2','SAG','SAMHD1','SBF2','SCN1B','SCN3B','SCN4A','SCN4B','SCN5A','SCN9A','SCNN1B','SCNN1G','SCO2','SDC3','SDHA','SDHB','SDHC','SEC23B','SEMA4A','SEPN1','SERPINA1','SERPINB6','SERPING1','SETX','SFTPA1','SFTPA2','SGCA','SGCB','SGCD','SGCG','SGSH','SH2B3','SH3BP2','SH3TC2','SHH','SIM1','SIX1','SIX5','SLC11A2','SLC12A1','SLC12A3','SLC16A1','SLC16A2','SLC17A5','SLC17A8','SLC19A3','SLC22A18','SLC22A4','SLC22A5','SLC25A15','SLC25A22','SLC25A38','SLC25A4','SLC26A2','SLC26A4','SLC2A10','SLC2A4','SLC33A1','SLC34A1','SLC34A2','SLC35A1','SLC35C1','SLC37A4','SLC39A4','SLC3A1','SLC40A1','SLC45A2','SLC4A11','SLC52A3','SLC5A2','SLC5A5','SLC6A19','SLC7A9','SMAD9','SMARCB1','SMN1','SMN2','SMPD1','SNAI2','SNCB','SNRNP200','SNTA1','SOD1','SOS1','SOX10','SOX2','SOX9','SPATA7','SPG11','SPG20','SPG7','SPINK5','SPTA1','SPTAN1','SPTBN2','SPTLC1','SPTLC2','SQSTM1','SRD5A3','SRY','STAT3','STIL','STK11','STOX1','STRA6','STRC','STX11','STX16','STXBP2','SUFU','SUMF1','SUMO1','SURF1','TAP1','TAP2','TAPBP','TARDBP','TAT','TAZ','TBP','TBX20','TCAP','TCIRG1','TCOF1','TDP1','TECTA','TERC',
-       'TERT','TF','TFAP2A','TFR2','TGFB3','TGFBR1','TGFBR2','TGIF1','TGM1','THPO','THRB','TLL1','TLR2','TLR4','TMC1','TMC6','TMC8','TMEM43','TMEM67','TMIE','TMPRSS3','TMPRSS6','TNFRSF11A','TNFRSF13B','TNFRSF13C','TNFSF11','TNNC1','TNNI2','TNNI3','TNNT2','TNNT3','TOPORS','TP63','TPM2','TPO','TPP1','TPRN','TREX1','TRIM24','TRIM37','TRIOBP','TRIP11','TRPC6','TRPM1','TRPS1','TRPV4','TSG101','TTBK2','TTC8','TTN','TTR','TUBA1A','TULP1','TWIST1','TYRP1','UBR1','UCHL1','UCP1','UCP3','UGT1A1','UMOD','UNC13D','UPK3A','UROD','UROS','USH1C','USH1G','USH2A','USP9Y','VAPB','VCL','VHL','VSX2','VWF','WAS','WDPCP','WDR35','WDR36','WDR72','WHSC1L1','WNK1','WRN','WT1','XPA','XPC','XRCC3','XYLT1','XYLT2','ZEB1','ZFHX3','ZFYVE27','ZIC2','ZIC3','ZNF469','ZNF513','ZNF592')
-
+#funtion-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 striness_test<-function(sddf=NA,geneList=NA){
-
   results<-apply(sddf,2,function(x){
-    
     bg.genes<-row.names(sddf[!is.na(x),])
     x<-x[!is.na(x)]
 
@@ -235,6 +226,12 @@ striness_test<-function(sddf=NA,geneList=NA){
   return(results)
 }
 
+#Fig4B-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+HI<-c('ANK2','APC','BCL11B','CD2AP','COMT','CSF2RA','DMPK','DYRK1A','EGR1','EHMT1','FGF10','FOXP1','FOXP2','GCH1','GHRL','GTF2I','HOXD13','IGF1','KCNQ2','LMX1B','MAPT','MC4R','NF1','NKX2-5','NLGN4X','NLRP3','NPAS3','NSD1','PARK2','PAX6','PIK3R1','PRODH','PTEN','RELN','SATB2','SCN1A','SEMA5A','SHFM1','SHMT1','SNCA','SPR','ST7','TBX1','TCF4','TGFB1','TPM1','TSC1','TSC2','WWOX')
+LOFT<-c('A2M','ABCA10','ABCA8','ABCC11','ABCC12','ABHD12B','ABHD14B','ACSBG2','ACSM2A','ACSM2B','ACSM3','ADAM2','ADPRHL1','ADSSL1','AHNAK2','AKAP3','ALDH1B1','ANKRD30A','ANKRD35','ANO5','AP1G2','APIP','APOBEC3A','APOBEC3B','ASB15','ASPSCR1','ATP10B','ATP11A','ATP12A','ATP2C2','BPHL','BPIFA3','BTN3A3','BTNL2','BTNL8','BTNL9','C10orf53','C11orf40','C1orf127','C2orf40','C3orf14','C4orf46','C4orf50','C6','CABYR','CAPN9','CARD6','CCDC121','CCDC13','CCDC60','CCDC66','CD180','CD36','CD96','CDH19','CDK11A','CDKL2','CELA1','CEP72','CES1','CES5A','CFHR1','CFHR2','CFHR3','CHD1L','CHIT1','CHPF2','CLCN1','CLYBL','CNKSR1','COL16A1','COL6A2','COL6A5','CPXM2','CROT','CRYGN','CRYZ','CSH1','CTSE','CYP2A6','CYP2C8','CYP2D6','CYP2F1','CYP3A5','CYP4B1','DCDC2B','DCHS2','DDX60','DEFB126','DHDH','DMBT1','DNAH7','DQX1','DUOX2','ECT2L','EFCAB13','EFCAB3','EFCAB5','EFCAB6','ENOSF1','ENPEP','EPPK1','EPX','ERAP1','ERV3-1','EXO5','FAM129C','FAM151A','FAM187B','FAM45A','FAM81B','FCGBP','FCGR2A','FCN3','FLG','FLG2','FMO2','FRG2B','FUT2','FUT6','GADL1','GBGT1','GBP3','GBP4','GCFC2','GH2','GJB4','GLB1L2','GMPR','GOLGA8S','GP6','GPATCH2L','GRIN3B','GRK7','GYPB','HELB','HK3','HLA-B','HLA-DPA1','HPSE','HRG','HRNR','IDI2','IFIH1','IFNK','IL17RC','IL3RA','IQCH','ITIH1','KIAA0753','KIAA1257','KIAA1586','KIR3DL1','KLK14','KLK3','KRT4','KRT77','KRT83','LMF2','LMO7','LPA','LRRC39','LRTM1','MANEA','MAP3K4','MAZ','MCF2L','MCOLN3','MFSD9','MGAM','MLANA','MMP10','MOGAT1','MOK','MOXD1','MS4A6A','MST1','MUC17','MUC6','MUTYH','MYBBP1A','MYH1','MYH13','MYH8','MYO1A','MYOC','MYOF','NAALAD2','NBPF14','NBPF15','NEIL1','NLRP13','NLRP9','NOP16','NUDT8','OARD1','OBSCN','OCEL1','OR8S1','PAPLN','PDE11A','PDIA2','PGPEP1L','PHRF1','PKD1L2','PKHD1L1','PLA2G2C','PLA2G4D','PLA2R1','PLEKHG7','PLIN4','PNLIPRP3','POLM','POTEH','PPEF2','PPL','PPP1R3A','PRAMEF2','PRB1','PRB2','PRB4','PSG1','PSG11','PSG4','PSG9','PTCHD3','PTGDR','PXDNL','PZP','RAI1','RERGL','RETSAT','RFPL1','RGPD4','RGS11','RHD','RNF32','ROPN1B','RP1L1','RPTN','RTKN2','RTP1','SAMD11','SEMG2','SERHL2','SERPINA10','SERPINA9','SERPINB3','SFI1','SIGLEC1','SIGLEC5','SLC17A9','SLC22A10','SLC22A14','SLC22A25','SLC26A10','SLC5A4','SLCO1B1','SLFN13','SPATA31A6','SPATA4','SPATC1','SPNS3','SULT1A2','SULT1C4','SYNM','SYTL2','TAF6','TCF3','TCHHL1','TEKT3','TGM4','THBS4','THEM5','TIGD6','TLR10','TLR5','TMC2','TMEM82','TMIE','TMPRSS7','TNN','TRIM22','TRIM45','TRIM48','TRIM59','TRMT10B','TRMT2A','TTC38','TTN','UGT2B10','UGT2B17','UGT2B28','UMODL1','UNC93A','UPB1','UPK3A','UPP2','USP45','USP6','VILL','VWA3B','VWA7','WDR27','WDR90','XIRP1','XRRA1','ZAN','ZNF223','ZNF229','ZNF257','ZNF30','ZNF343','ZNF396','ZNF417','ZNF486','ZNF528','ZNF544','ZNF587','ZNF599','ZNF611','ZNF790','ZNF83','ZNF831','ZNF844','ZNF846','ZNF860','ZNF878','ZNF92','ZRANB3')
+NNN<-c('KCNJ10','KCNJ11','KCNJ2','KCNJ5','KCNQ1','KCNQ1OT1','KCNQ4','KCTD7','KIAA0196','KIF1B','KIF5A','KIF7','KIT','KLF1','KLF11','KLF6','KLHDC8B','KLK4','KRAS','KRT1','KRT10','KRT13','KRT16','KRT17','KRT4','KRT6A','KRT6B','KRT81','KRT83','KRT86','L2HGDH','LAMA2','LAMP2','LARGE','LBR','LCA5','LCAT','LDB3','LEMD3','LEPRE1','LFNG','LHFPL5','LIG4','LIPI','LITAF','LMBR1','LMBRD1','LOXHD1','LOXL1','LPL','LPP','LRAT','LRP5','LRRC8A','LRTOMT','LTBP2','LTBP3','LYST','LYZ','LZTS1','MAMLD1','MAN2B1','MANBA','MAP3K1','MAP3K8','MAPK10','MAPK8IP1','MARVELD2','MC1R','MCCC2','MCOLN1','MED25','MEFV','MEN1','MESP2','MFN2','MFSD8','MGAT2','MINPP1','MITF','MKKS','MKS1','MLH1','MLH3','MLLT10','MMAA','MMAB','MMACHC','MMADHC','MMP13','MMP20','MN1','MOGS','MPDU1','MPI','MPL','MPLKIP','MPZ','MS4A1','MSH2','MSH6','MSX1','MSX2','MTMR2','MTTP','MUC5B','MUTYH','MVK','MXI1','MYBPC3','MYC','MYH11','MYH14','MYH3','MYH6','MYH7','MYH9','MYL2','MYL3','MYLK2','MYO15A','MYO1A','MYO3A','MYO6','MYO7A','MYOC','MYOT','NBN','NCF1','NCF2','NCOA4','NCSTN','NDP','NDRG1','NDUFA10','NDUFA12','NDUFA13','NDUFA2','NDUFA9','NDUFS3','NDUFS4','NDUFS7','NDUFS8','NEFH','NEFL','NEUROD1','NEXN','NF2','NHLRC1','NIPA1','NIPBL','NKX2-6','NLRP7','NME1','NOBOX','NODAL','NOG','NOTCH1','NOTCH2','NPC2','NPHP1','NPHP3','NPHP4','NPM1','NPPA','NPR2','NR0B1','NR0B2','NR2E3','NR4A3','NR5A1','NRL','NT5C3A','NUP214','NUP62','NYX','OAS1','OAT','OCA2','OCLN','OCRL','ODC1','OFD1','OGG1','OPCML','OPN1LW','OPN1MW','OPTN','OSMR','OSTM1','OTC','OTOA','OTOF','OTX2','PABPN1','PADI4','PALB2','PANK2','PARK7','PAX3','PAX4','PAX7','PAX8','PAX9','PC','PCCA',
+       'PCCB','PCDH15','PCM1','PDE6B','PDE6C','PDE6G','PDE8B','PDGFRA','PDGFRL','PDHA1','PDX1','PDYN','PDZD7','PEX1','PEX10','PEX13','PEX14','PEX19','PEX2','PEX26','PEX3','PEX5','PFKM','PHEX','PHF6','PHGDH','PHKA2','PHKB','PHKG2','PHYH','PINK1','PITPNM3','PITX2','PKD1','PKD2','PKHD1','PLA2G2A','PLA2G6','PLAG1','PLCB1','PLOD1','PLP1','PMM2','PMP22','PNKP','PNP','PNPLA6','POLG','POLH','POLR1C','POLR1D','POMT1','POMT2','PORCN','POU3F4','POU4F3','PPARG','PPARGC1B','PPIB','PPOX','PPP1R3A','PPP2R1B','PPT1','PRCC','PRCD','PRF1','PRICKLE2','PRKAG2','PRKAR1A','PRKCG','PRKCH','PRNP','PROK2','PROKR2','PROM1','PRPF3','PRPF31','PRPF8','PRPH','PRPH2','PRPS1','PRX','PSAT1','PSENEN','PSPH','PTCH1','PTCH2','PTGIS','PTHLH','PTPN1','PTPN11','PTPN22','PTPRJ','PTPRQ','PTRF','PYGM','RAB7A','RAD51','RAD54L','RAX','RAX2','RB1','RB1CC1','RBM20','RBM8A','RD3','RDH12','RDH5','RDX','RECQL4','REEP1','REN','RET','RFT1','RFX5','RFXANK','RFXAP','RGR','RHAG','RHO','RLBP1','RMRP','RNASEH2A','RNASEH2B','RNASEH2C','RNF139','RNF6','ROBO2','ROR2','RP1','RP1L1','RP2','RP9','RPE65','RPGR','RPGRIP1','RPL11','RPL35A','RPL5','RPS10','RPS17','RPS19','RPS24','RPS7','RSPH4A','RSPH9','RSPO4','RUNX1','RUNX2','RXFP2','RYR1','RYR2','SAG','SAMHD1','SBF2','SCN1B','SCN3B','SCN4A','SCN4B','SCN5A','SCN9A','SCNN1B','SCNN1G','SCO2','SDC3','SDHA','SDHB','SDHC','SEC23B','SEMA4A','SEPN1','SERPINA1','SERPINB6','SERPING1','SETX','SFTPA1','SFTPA2','SGCA','SGCB','SGCD','SGCG','SGSH','SH2B3','SH3BP2','SH3TC2','SHH','SIM1','SIX1','SIX5','SLC11A2','SLC12A1','SLC12A3','SLC16A1','SLC16A2','SLC17A5','SLC17A8','SLC19A3','SLC22A18','SLC22A4','SLC22A5','SLC25A15','SLC25A22','SLC25A38','SLC25A4','SLC26A2','SLC26A4','SLC2A10','SLC2A4','SLC33A1','SLC34A1','SLC34A2','SLC35A1','SLC35C1','SLC37A4','SLC39A4','SLC3A1','SLC40A1','SLC45A2','SLC4A11','SLC52A3','SLC5A2','SLC5A5','SLC6A19','SLC7A9','SMAD9','SMARCB1','SMN1','SMN2','SMPD1','SNAI2','SNCB','SNRNP200','SNTA1','SOD1','SOS1','SOX10','SOX2','SOX9','SPATA7','SPG11','SPG20','SPG7','SPINK5','SPTA1','SPTAN1','SPTBN2','SPTLC1','SPTLC2','SQSTM1','SRD5A3','SRY','STAT3','STIL','STK11','STOX1','STRA6','STRC','STX11','STX16','STXBP2','SUFU','SUMF1','SUMO1','SURF1','TAP1','TAP2','TAPBP','TARDBP','TAT','TAZ','TBP','TBX20','TCAP','TCIRG1','TCOF1','TDP1','TECTA','TERC',
+       'TERT','TF','TFAP2A','TFR2','TGFB3','TGFBR1','TGFBR2','TGIF1','TGM1','THPO','THRB','TLL1','TLR2','TLR4','TMC1','TMC6','TMC8','TMEM43','TMEM67','TMIE','TMPRSS3','TMPRSS6','TNFRSF11A','TNFRSF13B','TNFRSF13C','TNFSF11','TNNC1','TNNI2','TNNI3','TNNT2','TNNT3','TOPORS','TP63','TPM2','TPO','TPP1','TPRN','TREX1','TRIM24','TRIM37','TRIOBP','TRIP11','TRPC6','TRPM1','TRPS1','TRPV4','TSG101','TTBK2','TTC8','TTN','TTR','TUBA1A','TULP1','TWIST1','TYRP1','UBR1','UCHL1','UCP1','UCP3','UGT1A1','UMOD','UNC13D','UPK3A','UROD','UROS','USH1C','USH1G','USH2A','USP9Y','VAPB','VCL','VHL','VSX2','VWF','WAS','WDPCP','WDR35','WDR36','WDR72','WHSC1L1','WNK1','WRN','WT1','XPA','XPC','XRCC3','XYLT1','XYLT2','ZEB1','ZFHX3','ZFYVE27','ZIC2','ZIC3','ZNF469','ZNF513','ZNF592')
 HI.mouse<-unique(m2h[m2h$HGNC.symbol %in% HI,"MGI.symbol"])
 LOFT.mouse<-unique(m2h[m2h$HGNC.symbol %in% LOFT,"MGI.symbol"])
 NNN.mouse<-unique(m2h[m2h$HGNC.symbol %in% NNN,"MGI.symbol"])
@@ -262,6 +259,7 @@ fig4B<-ggplot(mdf,aes(gene,-log10(value)))+
         legend.position ='none',
         legend.background  = element_rect(colour = 'black'))
 
+#Fig4C-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ALS_S.mouse<-unique(m2h[m2h$HGNC.symbol %in% ALS_S,"MGI.symbol"])
 ALS_P.mouse<-unique(m2h[m2h$HGNC.symbol %in% ALS_P,"MGI.symbol"])
 HMN.mouse<-unique(m2h[m2h$HGNC.symbol %in% HMN,"MGI.symbol"])
@@ -294,9 +292,7 @@ sdf<-rbind(as.data.frame(t(result1)),
 
 sdf$gene<-c("ALS-susceptibility","ALS-pathogenicity","HMN","SA","SMA","SPG")
 mdf<-melt(sdf,id='gene')
-
 mdf$gene<-factor(mdf$gene,levels=unique(mdf$gene),order=T)
-
 
 fig4C<-ggplot(mdf,aes(variable,-log10(value)))+
   geom_histogram(stat = 'identity',position = "dodge",aes(fill = gene))+
@@ -307,10 +303,9 @@ fig4C<-ggplot(mdf,aes(variable,-log10(value)))+
   theme(panel.grid  = element_blank(),
         axis.title = element_text(colour='black'),
         axis.text = element_text(colour='black'),
-        legend.position = 'none')#,
+        legend.position = 'none')
 
-
-
+#Fig4D-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ALS_P_lof<-c('ALS2','ATXN2','C9orf72','CYLD','ERBB4','FUS','NEK1','OPTN','PFN1','PRPH','SIGMAR1','TARDBP','TBK1')
 ALS_P_gof<-c('FIG4','NEFH','SOD1','VAPB')
 ALS_P_unknown<-c('ANG','ANXA11','CCNF','CHCHD10','CHMP2B','DCTN1','HNRNPA1','KIF5A','MATR3','SETX','SPG11','SQSTM1','TUBA4A','UBQLN2','VCP')
@@ -347,7 +342,7 @@ fig4D<-ggplot(mdf,aes(variable,-log10(value)))+
         axis.text = element_text(colour='black'),
         legend.position = 'none')#,
 
-
+#Fig4E-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 tmp1<-df[row.names(df) %in% ALS_P_lof.mouse,'Gamma.motor.neurons',drop=F]
 tmp2<-df[row.names(df) %in% ALS_P_gof.mouse,'Gamma.motor.neurons',drop=F]
 tmp3<-df[row.names(df) %in% ALS_P_unknown.mouse,'Gamma.motor.neurons',drop=F]
@@ -380,12 +375,9 @@ print(fig4D,vp=viewport(layout.pos.row=9:12,layout.pos.col=1:65))
 print(fig4E,vp=viewport(layout.pos.row=9:12,layout.pos.col=66:100))
 dev.off()
 
-
-
-#Fig 3B-C
-
-
-#function
+#Fig3-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#Fig3B-C-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#function-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 circos_function<-function(r=1){
   x<-seq(-r,r,length=1000)
   y<-(r^2-x^2)^0.5
@@ -515,7 +507,7 @@ connect_ploy<-function(df1,df2){
   return(data.frame(x=x,y=y))
 }
 
-#data
+#data-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 set0<-c(brewer.pal(8, 'Set2'),brewer.pal(5, 'Set1'))
 load('discovery_mouse_spinal_cord_celltype.rda')
 bg.genes<-attr(ctd[[1]]$specificity,'dimnames')[[1]]
@@ -523,7 +515,7 @@ ALS_P_exp<-data.frame(ctd[[1]]$specificity[bg.genes %in% ALS_P.mouse,])
 ALS_S_exp<-data.frame(ctd[[1]]$specificity[bg.genes %in% ALS_S.mouse,])
 
 
-#fig3B
+#Fig3B-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ALS_P_exp$Gene<-row.names(ALS_P_exp)
 tmpdf<-melt(ALS_P_exp,id='Gene')
 g2g<-tmpdf[tmpdf[,3]>0.2,c(2,1,3)]
@@ -626,7 +618,7 @@ fig3B<-ggplot()+
         plot.background=element_rect(fill="transparent",colour=NA))
 
 
-#fig3C
+#Fig3C-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ALS_S_exp$Gene<-row.names(ALS_S_exp)
 tmpdf<-melt(ALS_S_exp,id='Gene')
 g2g<-tmpdf[tmpdf[,3]>0.2,c(2,1,3)]
