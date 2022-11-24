@@ -8,9 +8,6 @@
 #### 3 files with .txt and .rda suffix in data/ are employed in script.r
 
 
-#### 4 scripts in EWCE/ are the core function that used for enrichment analysis once you can not install EWCE R-package.
-
-
 # usage:
 
 git clone --recursive https://github.com/liuhankui/ALS.git
@@ -18,4 +15,3 @@ git clone --recursive https://github.com/liuhankui/ALS.git
 cd ALS/
 
 Rscript script.r
-
