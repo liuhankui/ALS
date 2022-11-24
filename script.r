@@ -40,15 +40,15 @@ dev.off()
 
 #Fig2-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 load('M2H.rda')
-m2h = unique(mouse_to_human_homologs[,c("HGNC.symbol","MGI.symbol")])
+m2h<-unique(mouse_to_human_homologs[,c("HGNC.symbol","MGI.symbol")])
 bg.mouse<-unique(m2h$MGI.symbol)
 
-ctdFile<-data.frame(species<-c('mouse',
-                               'mouse',
-                               'human',
-                               'mouse',
-                               'mouse',
-                               'mouse'),
+ctdFile<-data.frame(species=c('mouse',
+                              'mouse',
+                              'human',
+                              'mouse',
+                              'mouse',
+                              'mouse'),
                     region=c('mouse brain',
                              'mouse spinal cord',
                              'human muscle',
@@ -69,12 +69,12 @@ for(i in 1:6){
     load(ctdFile[j,3])
 
     if(ctdFile[j,1]=='mouse'){
+      bg<-bg.mouse
       homology<-unique(m2h[m2h$HGNC.symbol %in% x,"MGI.symbol"])
       hits<-homology[homology %in% attr(ctd[[1]]$specificity,'dimnames')[[1]]]
-      bg<-bg.mouse
     }else{
-      hits<-x[x %in% attr(ctd[[1]]$specificity,'dimnames')[[1]]]
       bg<-attr(ctd[[1]]$specificity,'dimnames')[[1]]
+      hits<-x[x %in% bg]
     }
 
     set.seed(2022)
