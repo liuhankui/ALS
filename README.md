@@ -11,7 +11,7 @@
 4. scripts in EWCE/ are the core function that used for enrichment analysis once you can not install EWCE R-package.
 
 
-usage:
+#usage:
 
 git clone --recursive https://github.com/liuhankui/ALS.git
 
