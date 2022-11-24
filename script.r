@@ -191,7 +191,7 @@ for(i in 1:2){
 }
 odfrep<-odfrep[-1,]
 row.names(odfrep)<-1:nrow(odfrep)
-write.table(odfrep,file='tableS6.xls',sep='\t',quote=F,row.names=F,col.names=T)
+write.table(odfrep,file='TableS6.xls',sep='\t',quote=F,row.names=F,col.names=T)
 odfrep
 
 #Fig4-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
