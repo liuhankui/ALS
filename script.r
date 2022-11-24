@@ -2,15 +2,14 @@
 library(grid)
 library(ggplot2)
 library(ggpubr)
-library(ggsignif)
 library(venn)
-library(table1)
 library(plyr)
 library(reshape2)
 library(RColorBrewer)
 library(ggsankey)
 library(tidyverse)
 library(dplyr)
+library(formattable)
 library(EWCE)
 
 #if can not install EWCE or run EWCE successfully, download and source the below four r scripts
@@ -19,7 +18,7 @@ library(EWCE)
 #source('generate_controlled_bootstrap_geneset.r')
 #source('get_summed_proportions.r')
 
-setwd("d:/ALS/data")
+setwd("ALS/data")
 
 
 ALS_P<-c('ALS2','ANG','ANXA11','ATXN2','C9orf72','CCNF','CHCHD10','CHMP2B','CYLD','DCTN1','ERBB4','FIG4','FUS','HNRNPA1','KIF5A','MATR3','NEFH','NEK1','OPTN','PFN1','PRPH','SETX','SIGMAR1','SOD1','SPG11','SQSTM1','TARDBP','TBK1','TUBA4A','UBQLN2','VAPB','VCP')
