@@ -41,7 +41,7 @@ venn(NDsGeneList,snames ='ALS,HMN,SA,SMA,SPG',zcolor = brewer.pal(5,"Set2"),opac
 dev.off()
 
 #Fig2-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-load('M2H.RData')
+load('M2H.rda')
 m2h = unique(mouse_to_human_homologs[,c("HGNC.symbol","MGI.symbol")])
 bg.mouse<-unique(m2h$MGI.symbol)
 
