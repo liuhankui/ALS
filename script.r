@@ -3,7 +3,7 @@ library(grid)
 library(ggplot2)
 library(lemon) # for fig2
 library(venn) # for fig1
-library(plyr)
+library(plyr) # for Table S6
 library(reshape2)
 library(RColorBrewer)
 library(ggsankey) # for fig3A
