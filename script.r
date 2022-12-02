@@ -210,6 +210,10 @@ meta<-function(p){z<-qnorm(p/2);w<-rep(1,length(p));zscore<-sum(z*w)/(sum(w^2))^
 metadf<-ddply(mndf,.(celltype,gene),summarise,metapvalue=meta(p))
 write.table(metadf,file='TableS6_2.xls',sep='\t',quote=F,row.names=F,col.names=T)
 
+odfrepsign<-odfrep[odfrep$p<0.05,]
+odfrepsign<-odfrepsign[c(9,12,23,26,32,16,18,37,42,44,47),]
+write.table(odfrepsign,file='TableS7.xls',sep='\t',quote=F,row.names=F,col.names=T)
+
 #Fig4-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #Fig4A-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 df<-read.table("brain_and_SP.sd.txt",sep="\t",row.names = 1,head=T)
