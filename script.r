@@ -266,6 +266,7 @@ sdf<-rbind(as.data.frame(t(result1)),
 
 sdf$gene<-c('HI','LOFT','NNN')
 mdf<-melt(sdf,id='gene')
+mdf$variable<-as.character(factor(mdf$variable,levels=c('brain','SP'),labels=c('Mouse brain','Mouse spinal cord')))
 mdf$value<-p.adjust(mdf$value,method='fdr')
 fig4B<-ggplot(mdf,aes(gene,-log10(value)))+
   geom_histogram(width=0.75,stat = 'identity',position = "dodge",aes(fill = gene))+
