@@ -48,21 +48,24 @@ ctdFile<-data.frame(species=c('mouse',
                               'human',
                               'mouse',
                               'mouse',
+                              'human',
                               'mouse'),
                     region=c('mouse brain',
                              'mouse spinal cord',
                              'human muscle',
-                             'mouse brain',
                              'mouse spinal cord (Milich dataset)',
-                             'mouse spinal cord (Sathyamurthy dataset)'),
+                             'mouse spinal cord (Sathyamurthy dataset)',
+                             'human spinal cord',
+                             'mouse brain'),
                     ctdName=c('discovery_mouse_brain_celltype.rda',
                               'discovery_mouse_spinal_cord_celltype.rda',
                               'discovery_human_muscle_celltype.rda',
-                              'replication_mouse_brain_celltype.rda',
                               'replication_Milich.rda',
-                              'replication_Sathyamurthy.rda'))
+                              'replication_Sathyamurthy.rda',
+                              'validation_human_spinal_cord_celltype.rda',
+                              'replication_mouse_brain_celltype.rda'))
 
-odf<-data.frame(celltype=NA,FDR=NA,gene=NA,source=NA)
+odf<-data.frame(celltype=NA,FDR=NA,gene=NA,source=NA,p=NA)
 for(i in 1:6){
   x<-GeneList[[i]]
   for(j in 1:3){
@@ -89,7 +92,7 @@ for(i in 1:6){
     rdf$results$FDR<-p.adjust(rdf$results$p,method='fdr')
     rdf$results$gene<-names(GeneList)[i]
     rdf$results$source<-ctdFile[j,2]
-    rdf<-rdf$results[,c('celltype','FDR','gene','source')]
+    rdf<-rdf$results[,c('celltype','FDR','gene','source','p')]
     odf<-rbind(odf,rdf)
   }
 }
@@ -161,14 +164,20 @@ fig3A<-ggplot(ldf, aes(x = x, next_x = next_x, node = node, next_node = next_nod
 
 #supplement table 6-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 odfrep<-data.frame(celltype=NA,p=NA,gene=NA,source=NA)
-for(i in 1:2){
+for(i in 1:6){
   x<-GeneList[[i]]
-  for(j in 5:6){
+  for(j in 4:7){
     load(ctdFile[j,3])
-    bg<-bg.mouse
-    homology<-unique(m2h[m2h$HGNC.symbol %in% x,"MGI.symbol"])
-    hits<-homology[homology %in% attr(ctd[[1]]$specificity,'dimnames')[[1]]]
-
+    
+    if(ctdFile[j,1]=='mouse'){
+      bg<-bg.mouse
+      homology<-unique(m2h[m2h$HGNC.symbol %in% x,"MGI.symbol"])
+      hits<-homology[homology %in% attr(ctd[[1]]$specificity,'dimnames')[[1]]]
+    }else{
+      bg<-attr(ctd[[1]]$specificity,'dimnames')[[1]]
+      hits<-x[x %in% bg]
+    }
+    
     set.seed(2022)
     rdf<-bootstrap_enrichment_test(sct_data=ctd,
                                    hits=hits,
@@ -181,14 +190,25 @@ for(i in 1:2){
     rdf$results$gene<-names(GeneList)[i]
     rdf$results$source<-ctdFile[j,2]
     
-    rdf<-rdf$results[rdf$results$celltype %in% c('Alpha.motor.neurons','Gamma.motor.neurons'),c('celltype','p','gene','source')]
+    rdf<-rdf$results[,c('celltype','gene','source','p')]
     odfrep<-rbind(odfrep,rdf)
   }
 }
 odfrep<-odfrep[-1,]
 row.names(odfrep)<-1:nrow(odfrep)
-write.table(odfrep,file='TableS6.xls',sep='\t',quote=F,row.names=F,col.names=T)
-odfrep
+mndf<-odfrep[odfrep$celltype %in% c('Alpha.motor.neurons','Gamma.motor.neurons','alpha_mn','gamma_mn'),]
+
+mndf$celltype<-as.character(factor(mndf$celltype,
+                                    levels=c('Alpha.motor.neurons','alpha_mn','Gamma.motor.neurons','gamma_mn'),
+                                    labels=c('Alpha motor neurons','Alpha motor neurons','Gamma motor neurons','Gamma motor neurons')))
+
+pdf<-odf[(odf$gene=='ALS-pathogenicity' | odf$gene=='ALS-susceptibility') & odf$source=='mouse spinal cord' & (odf$celltype=='Alpha motor neurons' | odf$celltype=='Gamma motor neurons'),-2]
+
+mndf<-rbind(pdf,mndf)
+write.table(mndf,file='TableS6_1.xls',sep='\t',quote=F,row.names=F,col.names=T)
+meta<-function(p){z<-qnorm(p/2);w<-rep(1,length(p));zscore<-sum(z*w)/(sum(w^2))^0.5;metapvalue<-2*(1-pnorm(abs(-zscore)));return(metapvalue)}
+metadf<-ddply(mndf,.(celltype,gene),summarise,metapvalue=meta(p))
+write.table(metadf,file='TableS6_2.xls',sep='\t',quote=F,row.names=F,col.names=T)
 
 #Fig4-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #Fig4A-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
