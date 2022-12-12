@@ -1,7 +1,7 @@
 #requirements-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 library(grid)
 library(ggplot2)
-library(lemon) # for fig2
+library(ggpubr) # for fig2
 library(venn) # for fig1
 library(plyr) # for Table S6
 library(reshape2)
@@ -110,9 +110,9 @@ fig2A<-ggplot(odf[odf$source=='mouse brain',],aes(celltype,-log10(FDR)))+
   theme_classic()+
   scale_fill_brewer(palette = 'Set2')+
   coord_flip()+
-  theme(legend.title = element_blank(),
-        axis.title = element_text(colour='black'),
-        axis.text = element_text(colour='black'))
+  theme(legend.title=element_blank(),
+        plot.title = element_text(size=15,colour="black"),
+        axis.title = element_text(size=15,colour="black"))
 
 fig2B<-ggplot(odf[odf$source=='mouse spinal cord',],aes(celltype,-log10(FDR)))+
   geom_histogram(stat = 'identity',position = "dodge",aes(fill = gene))+
@@ -124,9 +124,9 @@ fig2B<-ggplot(odf[odf$source=='mouse spinal cord',],aes(celltype,-log10(FDR)))+
   theme_classic()+
   scale_fill_brewer(palette = 'Set2')+
   coord_flip()+
-  theme(legend.title = element_blank(),
-        axis.title = element_text(colour='black'),
-        axis.text = element_text(colour='black'))
+  theme(legend.title=element_blank(),
+        plot.title = element_text(size=15,colour="black"),
+        axis.title = element_text(size=15,colour="black"))
 
 fig2C<-ggplot(odf[odf$source=='human muscle',],aes(celltype,-log10(FDR)))+
   geom_histogram(stat = 'identity',position = "dodge",aes(fill = gene))+
@@ -138,31 +138,27 @@ fig2C<-ggplot(odf[odf$source=='human muscle',],aes(celltype,-log10(FDR)))+
   theme_classic()+
   scale_fill_brewer(palette = 'Set2')+
   coord_flip()+
-  theme(legend.title = element_blank(),
-        axis.title = element_text(colour='black'),
-        axis.text = element_text(colour='black'))
+  theme(legend.title=element_blank(),
+        plot.title = element_text(size=15,colour="black"),
+        axis.title = element_text(size=15,colour="black"))
 
-pdf('Fig2.pdf',width=15,height=7)
-grid_arrange_shared_legend(fig2A,fig2B,fig2C,ncol=3,position='top')
-dev.off()
-
-#Fig3-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#Fig3A
 sdf<-odf[odf$FDR<0.07,]
 ldf<-sdf %>% make_long(gene,celltype,source)
-fig3A<-ggplot(ldf, aes(x = x, next_x = next_x, node = node, next_node = next_node, fill = node, label = node)) +
+fig2D<-ggplot(ldf, aes(x = x, next_x = next_x, node = node, next_node = next_node, fill = node, label = node)) +
   geom_sankey(flow.alpha = .6,node.color = "gray30") +
   geom_sankey_label(size = 3, color = "black") +
   theme_sankey(base_size = 18) +
-  labs(x = NULL)+ggtitle("A")+
+  labs(x = NULL)+ggtitle("D")+
   theme(legend.position = "none",
-        plot.title = element_text(size=20,hjust=.15),
+        plot.title = element_text(size=15,hjust=.15),
         axis.text = element_blank(),
-        axis.title = element_text(size=18,colour="black"),
-        strip.text = element_text(size=15,colour="black"))
+        axis.title = element_text(size=15,colour="black"))
 
+fig2ABC<-ggarrange(fig2A,fig2B,fig2C,ncol=3,common.legend=T)
+ggarrange(fig2ABC,fig2D,nrow=2,heights=c(3,1))
+ggsave(filename='Fig2.pdf',width=15,height=12)
 
-#supplement table 6-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#supplement table 6-7----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 odfrep<-data.frame(celltype=NA,p=NA,gene=NA,source=NA)
 for(i in 1:6){
   x<-GeneList[[i]]
@@ -214,10 +210,10 @@ odfrepsign<-odfrep[odfrep$p<0.05,]
 odfrepsign<-odfrepsign[c(9,12,23,26,32,16,18,37,42,44,47),]
 write.table(odfrepsign,file='TableS7.xls',sep='\t',quote=F,row.names=F,col.names=T)
 
-#Fig4-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#Fig4A-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#Fig3-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#Fig3A-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 df<-read.table("brain_and_SP.sd.txt",sep="\t",row.names = 1,head=T)
-fig4A<-ggplot(df,aes(brain))+
+fig3A<-ggplot(df,aes(brain))+
   geom_histogram(bins=100,fill= brewer.pal(5,"Set2")[5])+
   xlab('Strictness')+ylab('Counts')+ylim(c(-150,1300))+
   theme_classic()+ggtitle('A')+
@@ -247,7 +243,7 @@ strictness_test<-function(sddf=NA,geneList=NA){
   return(results)
 }
 
-#Fig4B-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#Fig3B-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 HI<-c('ANK2','APC','BCL11B','CD2AP','COMT','CSF2RA','DMPK','DYRK1A','EGR1','EHMT1','FGF10','FOXP1','FOXP2','GCH1','GHRL','GTF2I','HOXD13','IGF1','KCNQ2','LMX1B','MAPT','MC4R','NF1','NKX2-5','NLGN4X','NLRP3','NPAS3','NSD1','PARK2','PAX6','PIK3R1','PRODH','PTEN','RELN','SATB2','SCN1A','SEMA5A','SHFM1','SHMT1','SNCA','SPR','ST7','TBX1','TCF4','TGFB1','TPM1','TSC1','TSC2','WWOX')
 LOFT<-c('A2M','ABCA10','ABCA8','ABCC11','ABCC12','ABHD12B','ABHD14B','ACSBG2','ACSM2A','ACSM2B','ACSM3','ADAM2','ADPRHL1','ADSSL1','AHNAK2','AKAP3','ALDH1B1','ANKRD30A','ANKRD35','ANO5','AP1G2','APIP','APOBEC3A','APOBEC3B','ASB15','ASPSCR1','ATP10B','ATP11A','ATP12A','ATP2C2','BPHL','BPIFA3','BTN3A3','BTNL2','BTNL8','BTNL9','C10orf53','C11orf40','C1orf127','C2orf40','C3orf14','C4orf46','C4orf50','C6','CABYR','CAPN9','CARD6','CCDC121','CCDC13','CCDC60','CCDC66','CD180','CD36','CD96','CDH19','CDK11A','CDKL2','CELA1','CEP72','CES1','CES5A','CFHR1','CFHR2','CFHR3','CHD1L','CHIT1','CHPF2','CLCN1','CLYBL','CNKSR1','COL16A1','COL6A2','COL6A5','CPXM2','CROT','CRYGN','CRYZ','CSH1','CTSE','CYP2A6','CYP2C8','CYP2D6','CYP2F1','CYP3A5','CYP4B1','DCDC2B','DCHS2','DDX60','DEFB126','DHDH','DMBT1','DNAH7','DQX1','DUOX2','ECT2L','EFCAB13','EFCAB3','EFCAB5','EFCAB6','ENOSF1','ENPEP','EPPK1','EPX','ERAP1','ERV3-1','EXO5','FAM129C','FAM151A','FAM187B','FAM45A','FAM81B','FCGBP','FCGR2A','FCN3','FLG','FLG2','FMO2','FRG2B','FUT2','FUT6','GADL1','GBGT1','GBP3','GBP4','GCFC2','GH2','GJB4','GLB1L2','GMPR','GOLGA8S','GP6','GPATCH2L','GRIN3B','GRK7','GYPB','HELB','HK3','HLA-B','HLA-DPA1','HPSE','HRG','HRNR','IDI2','IFIH1','IFNK','IL17RC','IL3RA','IQCH','ITIH1','KIAA0753','KIAA1257','KIAA1586','KIR3DL1','KLK14','KLK3','KRT4','KRT77','KRT83','LMF2','LMO7','LPA','LRRC39','LRTM1','MANEA','MAP3K4','MAZ','MCF2L','MCOLN3','MFSD9','MGAM','MLANA','MMP10','MOGAT1','MOK','MOXD1','MS4A6A','MST1','MUC17','MUC6','MUTYH','MYBBP1A','MYH1','MYH13','MYH8','MYO1A','MYOC','MYOF','NAALAD2','NBPF14','NBPF15','NEIL1','NLRP13','NLRP9','NOP16','NUDT8','OARD1','OBSCN','OCEL1','OR8S1','PAPLN','PDE11A','PDIA2','PGPEP1L','PHRF1','PKD1L2','PKHD1L1','PLA2G2C','PLA2G4D','PLA2R1','PLEKHG7','PLIN4','PNLIPRP3','POLM','POTEH','PPEF2','PPL','PPP1R3A','PRAMEF2','PRB1','PRB2','PRB4','PSG1','PSG11','PSG4','PSG9','PTCHD3','PTGDR','PXDNL','PZP','RAI1','RERGL','RETSAT','RFPL1','RGPD4','RGS11','RHD','RNF32','ROPN1B','RP1L1','RPTN','RTKN2','RTP1','SAMD11','SEMG2','SERHL2','SERPINA10','SERPINA9','SERPINB3','SFI1','SIGLEC1','SIGLEC5','SLC17A9','SLC22A10','SLC22A14','SLC22A25','SLC26A10','SLC5A4','SLCO1B1','SLFN13','SPATA31A6','SPATA4','SPATC1','SPNS3','SULT1A2','SULT1C4','SYNM','SYTL2','TAF6','TCF3','TCHHL1','TEKT3','TGM4','THBS4','THEM5','TIGD6','TLR10','TLR5','TMC2','TMEM82','TMIE','TMPRSS7','TNN','TRIM22','TRIM45','TRIM48','TRIM59','TRMT10B','TRMT2A','TTC38','TTN','UGT2B10','UGT2B17','UGT2B28','UMODL1','UNC93A','UPB1','UPK3A','UPP2','USP45','USP6','VILL','VWA3B','VWA7','WDR27','WDR90','XIRP1','XRRA1','ZAN','ZNF223','ZNF229','ZNF257','ZNF30','ZNF343','ZNF396','ZNF417','ZNF486','ZNF528','ZNF544','ZNF587','ZNF599','ZNF611','ZNF790','ZNF83','ZNF831','ZNF844','ZNF846','ZNF860','ZNF878','ZNF92','ZRANB3')
 NNN<-c('KCNJ10','KCNJ11','KCNJ2','KCNJ5','KCNQ1','KCNQ1OT1','KCNQ4','KCTD7','KIAA0196','KIF1B','KIF5A','KIF7','KIT','KLF1','KLF11','KLF6','KLHDC8B','KLK4','KRAS','KRT1','KRT10','KRT13','KRT16','KRT17','KRT4','KRT6A','KRT6B','KRT81','KRT83','KRT86','L2HGDH','LAMA2','LAMP2','LARGE','LBR','LCA5','LCAT','LDB3','LEMD3','LEPRE1','LFNG','LHFPL5','LIG4','LIPI','LITAF','LMBR1','LMBRD1','LOXHD1','LOXL1','LPL','LPP','LRAT','LRP5','LRRC8A','LRTOMT','LTBP2','LTBP3','LYST','LYZ','LZTS1','MAMLD1','MAN2B1','MANBA','MAP3K1','MAP3K8','MAPK10','MAPK8IP1','MARVELD2','MC1R','MCCC2','MCOLN1','MED25','MEFV','MEN1','MESP2','MFN2','MFSD8','MGAT2','MINPP1','MITF','MKKS','MKS1','MLH1','MLH3','MLLT10','MMAA','MMAB','MMACHC','MMADHC','MMP13','MMP20','MN1','MOGS','MPDU1','MPI','MPL','MPLKIP','MPZ','MS4A1','MSH2','MSH6','MSX1','MSX2','MTMR2','MTTP','MUC5B','MUTYH','MVK','MXI1','MYBPC3','MYC','MYH11','MYH14','MYH3','MYH6','MYH7','MYH9','MYL2','MYL3','MYLK2','MYO15A','MYO1A','MYO3A','MYO6','MYO7A','MYOC','MYOT','NBN','NCF1','NCF2','NCOA4','NCSTN','NDP','NDRG1','NDUFA10','NDUFA12','NDUFA13','NDUFA2','NDUFA9','NDUFS3','NDUFS4','NDUFS7','NDUFS8','NEFH','NEFL','NEUROD1','NEXN','NF2','NHLRC1','NIPA1','NIPBL','NKX2-6','NLRP7','NME1','NOBOX','NODAL','NOG','NOTCH1','NOTCH2','NPC2','NPHP1','NPHP3','NPHP4','NPM1','NPPA','NPR2','NR0B1','NR0B2','NR2E3','NR4A3','NR5A1','NRL','NT5C3A','NUP214','NUP62','NYX','OAS1','OAT','OCA2','OCLN','OCRL','ODC1','OFD1','OGG1','OPCML','OPN1LW','OPN1MW','OPTN','OSMR','OSTM1','OTC','OTOA','OTOF','OTX2','PABPN1','PADI4','PALB2','PANK2','PARK7','PAX3','PAX4','PAX7','PAX8','PAX9','PC','PCCA',
@@ -268,7 +264,7 @@ sdf$gene<-c('HI','LOFT','NNN')
 mdf<-melt(sdf,id='gene')
 mdf$variable<-as.character(factor(mdf$variable,levels=c('brain','SP'),labels=c('Mouse brain','Mouse spinal cord')))
 mdf$value<-p.adjust(mdf$value,method='fdr')
-fig4B<-ggplot(mdf,aes(gene,-log10(value)))+
+fig3B<-ggplot(mdf,aes(gene,-log10(value)))+
   geom_histogram(width=0.75,stat = 'identity',position = "dodge",aes(fill = gene))+
   geom_hline(yintercept = -log10(0.05),colour='red')+
   xlab('')+ylab(expression(paste('-',log[10],"FDR P-value")))+
@@ -281,7 +277,7 @@ fig4B<-ggplot(mdf,aes(gene,-log10(value)))+
         legend.position ='none',
         legend.background  = element_rect(colour = 'black'))
 
-#Fig4C-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#Fig3C-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ALS_S.mouse<-unique(m2h[m2h$HGNC.symbol %in% ALS_S,"MGI.symbol"])
 ALS_P.mouse<-unique(m2h[m2h$HGNC.symbol %in% ALS_P,"MGI.symbol"])
 HMN.mouse<-unique(m2h[m2h$HGNC.symbol %in% HMN,"MGI.symbol"])
@@ -316,7 +312,7 @@ sdf$gene<-c("ALS-susceptibility","ALS-pathogenicity","HMN","SA","SMA","SPG")
 mdf<-melt(sdf,id='gene')
 mdf$gene<-factor(mdf$gene,levels=unique(mdf$gene),order=T)
 
-fig4C<-ggplot(mdf,aes(variable,-log10(value)))+
+fig3C<-ggplot(mdf,aes(variable,-log10(value)))+
   geom_histogram(stat = 'identity',position = "dodge",aes(fill = gene))+
   geom_hline(yintercept = -log10(0.05),colour='red')+
   xlab('')+scale_y_continuous(expression(paste('-',log[10],"FDR P-value")))+
@@ -327,7 +323,7 @@ fig4C<-ggplot(mdf,aes(variable,-log10(value)))+
         axis.text = element_text(colour='black'),
         legend.position = 'none')
 
-#Fig4D-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#Fig3D-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 ALS_P_lof<-c('ALS2','ATXN2','C9orf72','CYLD','ERBB4','FUS','NEK1','OPTN','PFN1','PRPH','SIGMAR1','TARDBP','TBK1')
 ALS_P_gof<-c('FIG4','NEFH','SOD1','VAPB')
 ALS_P_unknown<-c('ANG','ANXA11','CCNF','CHCHD10','CHMP2B','DCTN1','HNRNPA1','KIF5A','MATR3','SETX','SPG11','SQSTM1','TUBA4A','UBQLN2','VCP')
@@ -352,7 +348,7 @@ mdf<-melt(sdf,id='gene')
 mdf$gene<-factor(mdf$gene,levels=unique(mdf$gene),order=T)
 mdf$P<-'ALS-pathogenicity'
 
-fig4D<-ggplot(mdf,aes(variable,-log10(value)))+
+fig3D<-ggplot(mdf,aes(variable,-log10(value)))+
   geom_histogram(stat = 'identity',position = "dodge",aes(fill = gene))+
   geom_hline(yintercept = -log10(0.05),colour='red')+
   xlab('')+scale_y_continuous(expression(paste('-',log[10],"FDR P-value")))+
@@ -364,7 +360,7 @@ fig4D<-ggplot(mdf,aes(variable,-log10(value)))+
         axis.text = element_text(colour='black'),
         legend.position = 'none')#,
 
-#Fig4E-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#Fig3E-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 tmp1<-df[row.names(df) %in% ALS_P_lof.mouse,'Gamma.motor.neurons',drop=F]
 tmp2<-df[row.names(df) %in% ALS_P_gof.mouse,'Gamma.motor.neurons',drop=F]
 tmp3<-df[row.names(df) %in% ALS_P_unknown.mouse,'Gamma.motor.neurons',drop=F]
@@ -373,7 +369,7 @@ tmp2$gene<-'GoF'
 tmp3$gene<-'unknown'
 gdf<-rbind(tmp1,tmp2,tmp3)
 
-fig4E<-ggplot(gdf,aes(gene,Gamma.motor.neurons))+
+fig3E<-ggplot(gdf,aes(gene,Gamma.motor.neurons))+
   geom_boxplot(aes(fill=gene))+
   annotate(geom = 'point',x = 'GoF',y =  gdf[row.names(gdf)=='Sod1','Gamma.motor.neurons'],colour='red',size=3)+
   ylab('Strictness in gamma MNs')+
@@ -387,366 +383,12 @@ fig4E<-ggplot(gdf,aes(gene,Gamma.motor.neurons))+
         axis.text = element_text(colour='black'))
 
 
-pdf('Fig4.pdf',width=10,height=10)
-grid.newpage()
-pushViewport(viewport(layout=grid.layout(12,100)))
-print(fig4A,vp=viewport(layout.pos.row=1:3,layout.pos.col=22:60))
-print(fig4B,vp=viewport(layout.pos.row=1:3,layout.pos.col=61:100))
-print(fig4C,vp=viewport(layout.pos.row=4:8,layout.pos.col=1:100))
-print(fig4D,vp=viewport(layout.pos.row=9:12,layout.pos.col=1:65))
-print(fig4E,vp=viewport(layout.pos.row=9:12,layout.pos.col=66:100))
-dev.off()
-
-#Fig3-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#Fig3B-C-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-#function-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-circos_function<-function(r=1){
-  x<-seq(-r,r,length=1000)
-  y<-(r^2-x^2)^0.5
-  return(data.frame(x=c(x,rev(x)),y=c(y,-y)))
-}
-
-circos_rect<-function(xita1,xita2,r,width){
-  xita<-seq(xita1,xita2,length=100)
-  arc_out_x<-cos(xita)*r
-  arc_out_y<-sin(xita)*r
-  arc_in_x<-cos(rev(xita))*(r-width)
-  arc_in_y<-sin(rev(xita))*(r-width)
-  
-  r_out_in<-seq(r,r-width,length=10)
-  
-  width_out_in_x<-cos(xita2)*r_out_in
-  width_out_in_y<-sin(xita2)*r_out_in
-  
-  width_in_out_x<-cos(xita1)*rev(r_out_in)
-  width_in_out_y<-sin(xita1)*rev(r_out_in)
-  
-  return(data.frame(x=c(arc_out_x,width_out_in_x,arc_in_x,width_in_out_x),
-                    y=c(arc_out_y,width_out_in_y,arc_in_y,width_in_out_y)))
-}
-
-point_function<-function(xita,r=1){
-  x<-cos(xita)*r
-  y<-sin(xita)*r
-  return(data.frame(x=x,y=y))
-}
-
-cos_connect<-function(x1,x2,dis,r){
-  if(dis<0.001*r){
-    dis<-0.001*r
-  }
-  
-  x<-seq(x1,x2,length=100)
-  y<- 0.5*dis/r*cos(x*pi/abs(x1-x2))-dis
-  return(data.frame(x=x,y=y))
-}
-
-change_coord<-function(xita,x,y){
-  xita<-xita-1.5*pi
-  xb=x*cos(xita)-y*sin(xita)
-  yb=x*sin(xita)+y*cos(xita)
-  return(data.frame(x=xb,y=yb))
-}
-
-p2p<-function(xita1,xita2,r){
-  if(xita1<0){
-    xita1<-xita1+2*pi
-  }
-  if(xita2<0){
-    xita2<-xita2+2*pi
-  }
-  if(abs(xita1-xita2)>pi){
-    if(xita1>xita2){
-      xita1<-xita1-2*pi
-    }else{
-      xita2<-xita2-2*pi
-    }
-  }
-  
-  midpoint_r<-abs(cos((xita1-xita2)/2))*r
-  
-  chrod <- sin(abs((xita1-xita2)/2))*r
-  xita<-(xita1+xita2)/2
-  
-  cdf<-cos_connect(-chrod,chrod,midpoint_r,r)
-  bdf<-change_coord(xita,cdf[,1],cdf[,2])
-  return(bdf)
-}
-
-arc_connect<-function(xita1,xita2,r){
-  
-  if(xita1<0){
-    xita1<-xita1+2*pi
-  }
-  if(xita2<0){
-    xita2<-xita2+2*pi
-  }
-  if(abs(xita1-xita2)>pi){
-    if(xita1>xita2){
-      xita1<-xita1-2*pi
-    }else{
-      xita2<-xita2-2*pi
-    }
-  }
-  
-  xita<-seq(xita2,xita1,length=100)
-  x<-cos(xita)*r
-  y<-sin(xita)*r
-  return(data.frame(x=x,y=y))
-}
-
-
-xita2xy<-function(xita,r){
-  x<-cos(xita)*r
-  y<-sin(xita)*r
-  return(data.frame(x=x,y=y))
-}
-
-connect_ploy<-function(df1,df2){
-  p1_s<-df1[1,]
-  p1_e<-df1[nrow(df1),]
-  p2_s<-df2[1,]
-  p2_e<-df2[nrow(df2),]
-  d1<-sum((p1_s-p2_s)^2)^0.5
-  d2<-sum((p1_s-p2_e)^2)^0.5
-  d3<-sum((p1_e-p2_s)^2)^0.5
-  d4<-sum((p1_e-p2_e)^2)^0.5
-  
-  if(sum(d1<=c(d2,d3,d4))==3){
-    x<-c(rev(df1[,1]),df2[,1])
-    y<-c(rev(df1[,2]),df2[,2])
-  }else if(sum(d2<=c(d1,d3,d4))==3){
-    x<-c(df2[,1],df1[,1])
-    y<-c(df2[,2],df1[,2])
-  }else if(sum(d3<=c(d2,d1,d4))==3){
-    x<-c(df1[,1],df2[,1])
-    y<-c(df1[,2],df2[,2])
-  }else if(sum(d4<=c(d2,d3,d1))==3){
-    x<-c(df2[,1],rev(df1[,1]))
-    y<-c(df2[,2],rev(df1[,2]))
-  }
-  
-  return(data.frame(x=x,y=y))
-}
-
-#data-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-set0<-c(brewer.pal(8, 'Set2'),brewer.pal(5, 'Set1'))
-load('discovery_mouse_spinal_cord_celltype.rda')
-bg.genes<-attr(ctd[[1]]$specificity,'dimnames')[[1]]
-ALS_P_exp<-data.frame(ctd[[1]]$specificity[bg.genes %in% ALS_P.mouse,])
-ALS_S_exp<-data.frame(ctd[[1]]$specificity[bg.genes %in% ALS_S.mouse,])
-
-
-#Fig3B-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-ALS_P_exp$Gene<-row.names(ALS_P_exp)
-tmpdf<-melt(ALS_P_exp,id='Gene')
-g2g<-tmpdf[tmpdf[,3]>0.2,c(2,1,3)]
-g2gRaw<-g2g
-g2g<-g2g[,1:2]
-names(g2g)<-c("go","gene")
-g2g[,2]<-factor(g2g[,2])
-g2g<-g2g[order(g2g[,2]),]
-goNum<-ddply(g2g,.(go),c("nrow"))
-goNum<-goNum[order(-goNum[,2]),]
-tagL<-sum(goNum[,2])
-tag<-unique(goNum[,1])
-tagN<-length(tag)-1
-breakUnit<-(1.49-0.51)*0.1*pi/tagN
-arcUnit<-(1.49-0.51)*0.9*pi/tagL
-start0<-0.51*pi
-rdf<-data.frame()
-tdf<-data.frame()
-for(i in tag){
-  startP<-start0
-  endP<-startP+goNum[goNum[,1]==i,2]*arcUnit
-  start0<-endP+breakUnit
-  tmp<-circos_rect(startP,endP,1.1,0.09)
-  tmp$group<-i
-  rdf<-rbind(rdf,tmp)
-  midP<-(startP+endP)/2
-  tmp2<-data.frame(tag=i,xita=midP)
-  tdf<-rbind(tdf,tmp2)
-  marker<-seq(startP,endP,by=arcUnit)
-  g2g$gene2goStart[g2g[,1]==i]<-rev(marker[-length(marker)])
-  g2g$gene2goEnd[g2g[,1]==i]<-rev(marker[-1])
-}
-
-geneNum<-ddply(g2g,.(gene),c("nrow"))
-#tagL<-sum(geneNum[,2])
-tag<-unique(g2g[,2])
-tagN<-length(tag)
-breakUnit<-(1.49-0.51)*0.1*pi/(tagN-1)
-arcUnit<-(1.49-0.51)*0.9*pi/tagN
-
-start0<- -0.49*pi
-rdf2<-data.frame()
-g2g[,1]<-factor(g2g[,1],levels=goNum[,1],order=T)
-g2g<-g2g[order(g2g[,1]),]
-
-for(i in tag){
-  startP<-start0
-  endP<-startP+arcUnit
-  start0<-endP+breakUnit
-  tmp<-circos_rect(startP,endP,1.1,0.045)
-  tmp$group<-i
-  rdf2<-rbind(rdf2,tmp)
-  midP<-(startP+endP)/2
-  tmp2<-data.frame(tag=i,xita=midP)
-  tdf<-rbind(tdf,tmp2)
-  weightGene<-cumsum(g2gRaw[g2gRaw[,2]==i,3])
-  #marker<-seq(startP,endP,length=geneNum[geneNum[,1]==i,2]+1)#by=arcUnit)
-  marker<-startP+(endP-startP)*weightGene/weightGene[length(weightGene)]
-  marker<-c(startP,marker)
-  g2g$go2geneStart[g2g[,2]==i]<-rev(marker[-length(marker)])
-  g2g$go2geneEnd[g2g[,2]==i]<-rev(marker[-1])
-}
-
-ndf_use<-data.frame()
-for(i in seq(nrow(g2g))){
-  #for(i in row.names(g2g[g2g[,2]=="Gene20",])){
-  xita<-c(g2g[i,3],g2g[i,4],g2g[i,5],g2g[i,6])
-  xita<-xita[order(xita)]
-  ndf<-p2p(xita[1],xita[4],1)
-  ndf1 <-arc_connect(xita[1],xita[2],1)
-  ndf2<-p2p(xita[2],xita[3],1)
-  ndf3 <-arc_connect(xita[3],xita[4],1)
-  
-  ndf_all<-connect_ploy(ndf,ndf1)
-  ndf_all<-connect_ploy(ndf_all,ndf2)
-  ndf_all<-connect_ploy(ndf_all,ndf3)
-  ndf_all$connect<-paste0(g2g[i,1],"_",g2g[i,2])
-  ndf_all$group<-g2g[i,1]
-  
-  ndf_use<-rbind(ndf_use,ndf_all)
-}
-
-cdf<-circos_function(1)
-
-tdf[,c(3,4)]<-xita2xy(tdf[,2],1.105)
-
-fig3B<-ggplot()+
-  geom_polygon(data=rdf,aes(x,y,group=group,fill=group))+
-  geom_polygon(data=rdf2,aes(x,y,group=group),fill="black")+
-  geom_polygon(data=ndf_use,aes(x,y,group=connect,fill=group),alpha=0.5)+
-  geom_text(data=tdf,aes(x,y,label=tag,angle=xita*180/pi),size=2.5,hjust=0)+
-  xlim(c(-2,2))+ylim(c(-2,2))+ggtitle('B')+scale_fill_manual(values=set0)+
-  theme(panel.grid = element_blank(),
-        legend.position = 'none',
-        axis.title = element_blank(),
-        axis.text = element_blank(),
-        axis.ticks = element_blank(),
-        #panel.background = element_blank(),
-        panel.background=element_rect(fill="transparent",colour=NA),
-        plot.background=element_rect(fill="transparent",colour=NA))
-
-
-#Fig3C-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-ALS_S_exp$Gene<-row.names(ALS_S_exp)
-tmpdf<-melt(ALS_S_exp,id='Gene')
-g2g<-tmpdf[tmpdf[,3]>0.2,c(2,1,3)]
-g2gRaw<-g2g
-g2g<-g2g[,1:2]
-names(g2g)<-c("go","gene")
-g2g[,2]<-factor(g2g[,2])
-g2g<-g2g[order(g2g[,2]),]
-goNum<-ddply(g2g,.(go),c("nrow"))
-goNum<-goNum[order(-goNum[,2]),]
-tagL<-sum(goNum[,2])
-tag<-unique(goNum[,1])
-tagN<-length(tag)-1
-breakUnit<-(1.49-0.51)*0.1*pi/tagN
-arcUnit<-(1.49-0.51)*0.9*pi/tagL
-start0<-0.51*pi
-rdf<-data.frame()
-tdf<-data.frame()
-for(i in tag){
-  startP<-start0
-  endP<-startP+goNum[goNum[,1]==i,2]*arcUnit
-  start0<-endP+breakUnit
-  tmp<-circos_rect(startP,endP,1.1,0.09)
-  tmp$group<-i
-  rdf<-rbind(rdf,tmp)
-  midP<-(startP+endP)/2
-  tmp2<-data.frame(tag=i,xita=midP)
-  tdf<-rbind(tdf,tmp2)
-  marker<-seq(startP,endP,by=arcUnit)
-  g2g$gene2goStart[g2g[,1]==i]<-rev(marker[-length(marker)])
-  g2g$gene2goEnd[g2g[,1]==i]<-rev(marker[-1])
-}
-
-geneNum<-ddply(g2g,.(gene),c("nrow"))
-#tagL<-sum(geneNum[,2])
-tag<-unique(g2g[,2])
-tagN<-length(tag)
-breakUnit<-(1.49-0.51)*0.1*pi/(tagN-1)
-arcUnit<-(1.49-0.51)*0.9*pi/tagN
-
-start0<- -0.49*pi
-rdf2<-data.frame()
-g2g[,1]<-factor(g2g[,1],levels=goNum[,1],order=T)
-g2g<-g2g[order(g2g[,1]),]
-
-for(i in tag){
-  startP<-start0
-  endP<-startP+arcUnit
-  start0<-endP+breakUnit
-  tmp<-circos_rect(startP,endP,1.1,0.045)
-  tmp$group<-i
-  rdf2<-rbind(rdf2,tmp)
-  midP<-(startP+endP)/2
-  tmp2<-data.frame(tag=i,xita=midP)
-  tdf<-rbind(tdf,tmp2)
-  weightGene<-cumsum(g2gRaw[g2gRaw[,2]==i,3])
-  #marker<-seq(startP,endP,length=geneNum[geneNum[,1]==i,2]+1)#by=arcUnit)
-  marker<-startP+(endP-startP)*weightGene/weightGene[length(weightGene)]
-  marker<-c(startP,marker)
-  g2g$go2geneStart[g2g[,2]==i]<-rev(marker[-length(marker)])
-  g2g$go2geneEnd[g2g[,2]==i]<-rev(marker[-1])
-}
-
-ndf_use<-data.frame()
-for(i in seq(nrow(g2g))){
-  #for(i in row.names(g2g[g2g[,2]=="Gene20",])){
-  xita<-c(g2g[i,3],g2g[i,4],g2g[i,5],g2g[i,6])
-  xita<-xita[order(xita)]
-  ndf<-p2p(xita[1],xita[4],1)
-  ndf1 <-arc_connect(xita[1],xita[2],1)
-  ndf2<-p2p(xita[2],xita[3],1)
-  ndf3 <-arc_connect(xita[3],xita[4],1)
-  
-  ndf_all<-connect_ploy(ndf,ndf1)
-  ndf_all<-connect_ploy(ndf_all,ndf2)
-  ndf_all<-connect_ploy(ndf_all,ndf3)
-  ndf_all$connect<-paste0(g2g[i,1],"_",g2g[i,2])
-  ndf_all$group<-g2g[i,1]
-  
-  ndf_use<-rbind(ndf_use,ndf_all)
-}
-
-cdf<-circos_function(1)
-
-tdf[,c(3,4)]<-xita2xy(tdf[,2],1.105)
-
-fig3C<-ggplot()+
-  geom_polygon(data=rdf,aes(x,y,group=group,fill=group))+
-  geom_polygon(data=rdf2,aes(x,y,group=group),fill="black")+
-  geom_polygon(data=ndf_use,aes(x,y,group=connect,fill=group),alpha=0.5)+
-  geom_text(data=tdf,aes(x,y,label=tag,angle=xita*180/pi),size=2.5,hjust=0)+
-  xlim(c(-2,2))+ylim(c(-2,2))+ggtitle('C')+scale_fill_manual(values=set0)+
-  theme(panel.grid = element_blank(),
-        legend.position = 'none',
-        axis.title = element_blank(),
-        axis.text = element_blank(),
-        axis.ticks = element_blank(),
-        #panel.background = element_blank(),
-        panel.background=element_rect(fill="transparent",colour=NA),
-        plot.background=element_rect(fill="transparent",colour=NA))
-
-
 pdf('Fig3.pdf',width=10,height=10)
 grid.newpage()
-pushViewport(viewport(layout=grid.layout(100,100)))
-print(fig3A,vp=viewport(layout.pos.row=1:50,layout.pos.col=1:100))
-print(fig3B,vp=viewport(layout.pos.row=51:100,layout.pos.col=1:50))
-print(fig3C,vp=viewport(layout.pos.row=51:100,layout.pos.col=51:100))
+pushViewport(viewport(layout=grid.layout(12,100)))
+print(fig3A,vp=viewport(layout.pos.row=1:3,layout.pos.col=22:60))
+print(fig3B,vp=viewport(layout.pos.row=1:3,layout.pos.col=61:100))
+print(fig3C,vp=viewport(layout.pos.row=4:8,layout.pos.col=1:100))
+print(fig3D,vp=viewport(layout.pos.row=9:12,layout.pos.col=1:65))
+print(fig3E,vp=viewport(layout.pos.row=9:12,layout.pos.col=66:100))
 dev.off()
