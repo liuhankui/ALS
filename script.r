@@ -6,9 +6,9 @@ library(venn) # for fig1
 library(plyr) # for Table S6
 library(reshape2)
 library(RColorBrewer)
-library(ggsankey) # for fig3A
-library(tidyverse) # for fig3A
-library(dplyr) # for fig3A
+library(ggsankey) # for fig2D
+library(tidyverse) # for fig2D
+library(dplyr) # for fig2D
 
 #workdir-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #git clone and cd ALS/  
