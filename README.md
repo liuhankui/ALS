@@ -18,4 +18,5 @@ Rscript script.r
 
 # Publication
 Liu H, Guan L, Deng M, Bolund L, Kristiansen K, Zhang J, Luo Y, Zhang Z. Integrative genetic and single cell RNA sequencing analysis provides new clues to the amyotrophic lateral sclerosis neurodegeneration. Front Neurosci. 2023 Feb 17;17:1116087. doi: 10.3389/fnins.2023.1116087. PMID: 36875658; PMCID: PMC9983639.
+
 Liu HK, He SJ, Zhang JG. A bioinformatic study revealed serotonergic neurons are involved in the etiology and therapygenetics of anxiety disorders. Transl Psychiatry. 2021 May 20;11(1):297. doi: 10.1038/s41398-021-01432-5. PMID: 34011923; PMCID: PMC8134630.
