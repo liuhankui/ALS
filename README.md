@@ -15,3 +15,6 @@ git clone --recursive https://github.com/liuhankui/ALS.git
 cd ALS/
 
 Rscript script.r
+
+# Publication
+Liu H, Guan L, Deng M, Bolund L, Kristiansen K, Zhang J, Luo Y, Zhang Z. Integrative genetic and single cell RNA sequencing analysis provides new clues to the amyotrophic lateral sclerosis neurodegeneration. Front Neurosci. 2023 Feb 17;17:1116087. doi: 10.3389/fnins.2023.1116087. PMID: 36875658; PMCID: PMC9983639.
